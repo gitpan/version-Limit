@@ -1,18 +1,64 @@
-------------------------------------------------------------------------
-r224 | jpeacock | 2004-01-30 21:11:11 -0500 (Fri, 30 Jan 2004) | 9 lines
-
-*    lib/version/Limit.pm
-     Scanty documentation
-
-*    MANIFEST
-     Delete Changes as it is now autocreated
-
-*    Makefile.PL
-     Add code to autocreate Changes from log entries
-
-------------------------------------------------------------------------
-r223 | jpeacock | 2004-01-30 07:02:27 -0500 (Fri, 30 Jan 2004) | 2 lines
-
-Import into repository now that basic tests pass
-
-------------------------------------------------------------------------
+2004-09-30 10:06:34 John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	   M /version-Limit/trunk/MANIFEST
+	
+	*    MANIFEST
+	     Need to keep 'Changes' so it gets added to tarfile
+	
+2004-09-30 10:02:44 John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	   A /version-Limit/trunk/Build.PL
+	   D /version-Limit/trunk/Changes
+	   M /version-Limit/trunk/MANIFEST
+	   M /version-Limit/trunk/Makefile.PL
+	   M /version-Limit/trunk/README
+	   M /version-Limit/trunk/lib/version/Limit.pm
+	
+	*    lib/version/Limit.pm
+	     bump version
+	     Improved POD
+	     More relaxed regex in limits
+	
+	*    MANIFEST
+	*    Makefile.PL
+	*    Build.PL
+	     use Module::Build instead of MakeMaker
+	
+	*    Changes
+	     generate automatically from repository
+	
+	*    README
+	     Forgot to change this in 0.01
+	
+2004-01-30 21:11:11 John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	   M /version-Limit/trunk/MANIFEST
+	   M /version-Limit/trunk/Makefile.PL
+	   M /version-Limit/trunk/lib/version/Limit.pm
+	
+	*    lib/version/Limit.pm
+	     Scanty documentation
+	
+	*    MANIFEST
+	     Delete Changes as it is now autocreated
+	
+	*    Makefile.PL
+	     Add code to autocreate Changes from log entries
+	
+2004-01-30 07:02:27 John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	   A /version-Limit
+	   A /version-Limit/trunk
+	   A /version-Limit/trunk/Changes
+	   A /version-Limit/trunk/MANIFEST
+	   A /version-Limit/trunk/Makefile.PL
+	   A /version-Limit/trunk/README
+	   A /version-Limit/trunk/lib
+	   A /version-Limit/trunk/lib/version
+	   A /version-Limit/trunk/lib/version/Limit.pm
+	   A /version-Limit/trunk/t
+	   A /version-Limit/trunk/t/01base.t
+	   A /version-Limit/trunk/t/LimitTest.pm
+	
+	Import into repository now that basic tests pass
+	

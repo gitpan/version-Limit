@@ -1,15 +1,15 @@
 package version::Limit;
 
-use 5.008_000;
+use 5.008_001;
 use strict;
 use warnings;
-use version 0.35;
+use version 0.41;
 
 require Exporter;
 
 our @ISA = qw(Exporter);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 # Preloaded methods go here.
 
@@ -34,6 +34,7 @@ sub Scope {
 }
 
 sub _VERSION {
+#    $DB::single = 1;
     my ($package,$req) = @_;
     $req = version->new($req);
     my $version = version->new(eval("\$$package\::VERSION"));
@@ -44,7 +45,7 @@ sub _VERSION {
     my @ranges = keys %{$package::_INCOMPATIBILITY};
     foreach my $range ( @ranges ) {
 	my ($lb,$lower,$upper,$ub) =
-		( $range =~ /(.)([0-9.]+),([0-9.]+)(.)/ );
+		( $range =~ /^\s*(.)([0-9.]+)\s*,\s*([0-9.]+)(.)\s*$/ );
 	$lb = '>' . ( $lb eq '[' ? '=' : '');
 	$ub = '<' . ( $ub eq ']' ? '=' : '');
 	$lower = version->new($lower);
@@ -93,14 +94,33 @@ B<version> compatibility module includes code that is proposed for Perl
 version::Limit, it is possible to use bare v-string's to denote version's
 without worrying about translation difficulty.
 
-=head2 Usage
+=head1 USAGE
 
+This module is intended to be use'd by a module L</Author> to enforce the
+interface restrictions inherent in their module.  From that point onwards,
+anyone using B<that> module (L</Consumer>) is restricted from using specific
+versions, with a useful error message explaining why.
+
+=head2 Author
+
+A module author who wishes to ensure than any interface changes are 
+specified in a consistent way only needs to add a call like this to their
+code:
+
+  use version::Limit;
+  version::Limit::Scope(
+    # see subsequent discussion for what needs to go here
+  );
+
+and any L</Consumer> of their module will not accidently run an incompatible
+version.
+ 
 For example, if a module changes in a incompatible way at version 1.0.0,
 then the following line will prevent any program from calling that module
 and requesting any version from 0.0.0 to 1.0.0:
 
   version::Limit::Scope(
-      "[0.0.0,1.0.0)" => "constructor syntax has changed"
+      "[0.0.0, 1.0.0)" => "constructor syntax has changed"
   );
 
 The first term (the range) is coded using standard set notation.  The above
@@ -108,7 +128,7 @@ translates to:
 
   greater than or equal to 0.0.0 and less than 1.0.0
 
-Note that both terminal characters are independent, so "(0.0.0,1.0.0]" is
+Note that both terminal characters are independent, so "(0.0.0, 1.0.0]" is
 also a permitted range.
 
 A module can also have holes in the permitted version values, for example to
@@ -116,7 +136,7 @@ account for a bug which was introduced in one version and fixed in a later
 one.  For example:
 
   version::Limit::Scope(
-    "[2.2.4,2.3.1)" => "frobniz method croaks without second argument"
+    "[2.2.4, 2.3.1)" => "frobniz method croaks without second argument"
   );
 
 would signify that starting in version 2.2.4, there was a problem which 
@@ -127,10 +147,27 @@ initialized either individually or all at once.  The ranges must be
 unique and exclusive, i.e. not overlap (although there is currently no
 code that checks that).
 
+=head2 Consumer
+
+A consumer of a module restricted with version::Limit doesn't have to do 
+anything except:
+
+  use Some::Module 1.3;
+
+and if that module has restrictions set and the requested version is inside
+one of the restricted ranges, then the user's module will die with an 
+appropriate error (as defined by the L</Author>).
+
+B<NOTE:> if the Consumer doesn't specify a version on the L<use> line, they
+will B<not> receive a warning, and the module will continue to load.  There is
+no way for the L</Author> to require that the Consumer always specify which 
+version they are targeting, but the L</Author> is strongly encouraged to state
+this in their module documentation.
+
 =head2 Limitations
 
 Because this module uses cutting edge features of Perl, it is limited to
-Perl 5.8.0 and greater, even though the B<version> module provides support
+Perl 5.8.1 and greater, even though the B<version> module provides support
 with all Perl versions 5.005_03 and greater.
 
 =head1 EXPORT

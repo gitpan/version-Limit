@@ -1,6 +1,8 @@
+Build.PL
 Makefile.PL
 MANIFEST
 README
+Changes
 t/01base.t
 t/LimitTest.pm
 lib/version/Limit.pm

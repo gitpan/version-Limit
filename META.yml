@@ -1,11 +1,16 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         version-Limit
-version:      0.01
-version_from: lib/version/Limit.pm
-installdirs:  site
+--- #YAML:1.0
+name: version-Limit
+version: 0.02
+author:
+  - John Peacock, E<lt>jpeacock@cpan.orgE<gt>
+abstract: |-
+  Perl extension for fine control of permitted versions
+license: perl
 requires:
-    version:                       0.35
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.21
+  perl: 5.8.1
+  version: 0.41
+provides:
+  version::Limit:
+    file: lib/version/Limit.pm
+    version: 0.02
+generated_by: Module::Build version 0.24

@@ -1,0 +1,18 @@
+------------------------------------------------------------------------
+r224 | jpeacock | 2004-01-30 21:11:11 -0500 (Fri, 30 Jan 2004) | 9 lines
+
+*    lib/version/Limit.pm
+     Scanty documentation
+
+*    MANIFEST
+     Delete Changes as it is now autocreated
+
+*    Makefile.PL
+     Add code to autocreate Changes from log entries
+
+------------------------------------------------------------------------
+r223 | jpeacock | 2004-01-30 07:02:27 -0500 (Fri, 30 Jan 2004) | 2 lines
+
+Import into repository now that basic tests pass
+
+------------------------------------------------------------------------

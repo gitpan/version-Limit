@@ -8,31 +8,31 @@ use Test::More tests => 9;
 
 use_ok("version::Limit");
 
-eval "use LimitTest 0.0.0",
+eval "use LimitTest 0.000";
 like($@, qr/constructor syntax/,
     "bottom of first range matches");
 
-eval "use LimitTest 0.1.0";
+eval "use LimitTest 0.001";
 like($@, qr/constructor syntax/,
     "middle of first range matches");
 
-eval "use LimitTest 1.0.0";
+eval "use LimitTest 1.0";
 ok(!$@, "top of first range doesn't match");
 
-eval "use LimitTest 1.1.1";
+eval "use LimitTest 1.001001";
 ok(!$@, "Between ranges doesn't match");
 
-eval "use LimitTest 2.2.4";
+eval "use LimitTest 2.002004";
 like($@, qr/frobniz method croaks/,
     "bottom of second range matches");
 
-eval "use LimitTest 2.2.100";
+eval "use LimitTest 2.002100";
 like($@, qr/frobniz method croaks/,
     "middle of second range matches");
 
-eval "use LimitTest 2.3.1";
+eval "use LimitTest 2.003001";
 ok(!$@, "top of second range doesn't match");
 
-eval "use LimitTest 5.0.0";
-like($@, qr/version 5.0.0 required/,
+eval "use LimitTest 5.000";
+like($@, qr/version 5.000 required/,
     "normal 'requested version too high' method works");

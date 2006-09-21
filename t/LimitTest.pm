@@ -1,8 +1,10 @@
 package LimitTest;
 
 use version::Limit;
+use version;
+use vars qw/$VERSION/;
 
-our $VERSION = "3.2.5";
+$VERSION = qv("3.2.5");
 
 version::Limit::Scope(
 	"[0.0.0,1.0.0)" => "constructor syntax has changed",

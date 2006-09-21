@@ -1,9 +1,9 @@
-Build.PL
+Changes
+lib/version/Limit.pm
 Makefile.PL
 MANIFEST
+MANIFEST.SKIP
+META.yml			Module meta-data (added by MakeMaker)
 README
-Changes
 t/01base.t
 t/LimitTest.pm
-lib/version/Limit.pm
-META.yml                                 Module meta-data (added by MakeMaker)

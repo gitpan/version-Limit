@@ -1,28 +1,17 @@
-version-Limit version 0.02
-==========================
+NAME
+    version::Limit - Perl extension for fine control of permitted versions
+
+SYNOPSIS
+      use version::Limit;
+      version::Limit::Scope(
+        "[0.0.0,1.0.0)" => "constructor syntax has changed",
+        "[2.2.4,2.3.1)" => "frobniz method croaks without second argument",
+      );
 
 INSTALLATION
+      The usual:
 
-To install this module type the following:
-
-   perl Makefile.PL
-   make
-   make test
-   make install
-
-DEPENDENCIES
-
-This module requires these other modules and libraries:
-
-  version
-  Perl 5.8.1 or better
-
-COPYRIGHT AND LICENCE
-
-Copyright (C) 2004 by John Peacock
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.3 or,
-at your option, any later version of Perl 5 you may have available.
-
-
+      perl Makefile.PL
+      make
+      make test
+      sudo make install

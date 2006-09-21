@@ -1,15 +1,16 @@
 package version::Limit;
 
-use 5.008_001;
+require 5.005_03;
 use strict;
-use warnings;
-use version 0.41;
+use version 0.6701;
 
 require Exporter;
 
-our @ISA = qw(Exporter);
+use vars qw/@ISA $VERSION/;
 
-our $VERSION = '0.02';
+@ISA = qw(Exporter);
+
+$VERSION = 0.03;
 
 # Preloaded methods go here.
 
@@ -34,7 +35,6 @@ sub Scope {
 }
 
 sub _VERSION {
-#    $DB::single = 1;
     my ($package,$req) = @_;
     $req = version->new($req);
     my $version = version->new(eval("\$$package\::VERSION"));
@@ -45,7 +45,7 @@ sub _VERSION {
     my @ranges = keys %{$package::_INCOMPATIBILITY};
     foreach my $range ( @ranges ) {
 	my ($lb,$lower,$upper,$ub) =
-		( $range =~ /^\s*(.)([0-9.]+)\s*,\s*([0-9.]+)(.)\s*$/ );
+		( $range =~ /(.)([0-9.]+),([0-9.]+)(.)/ );
 	$lb = '>' . ( $lb eq '[' ? '=' : '');
 	$ub = '<' . ( $ub eq ']' ? '=' : '');
 	$lower = version->new($lower);
@@ -87,40 +87,22 @@ a given module.  However, this precludes changing the provided interface,
 or specifically excluding certain versions (because of bugs).  Using this
 module makes both of those things possible.
 
-In addition, starting with Perl 5.8.0, the support for v-string's was
+In addition, starting with Perl 5.8.1, the support for v-string's was
 improved, but it is still difficult to use them for module versions.  The
 B<version> compatibility module includes code that is proposed for Perl 
-5.10.0, which will provide fully object oriented version objects.  With
-version::Limit, it is possible to use bare v-string's to denote version's
-without worrying about translation difficulty.
+5.10.0, which will provide fully object oriented version objects.  However,
+unless your module itself requires Perl 5.8.1 or better, callers of your
+module are still limited in how they can express the requested version on
+the C<use> line.  See L<Limitations> for more details.
 
-=head1 USAGE
+=head2 Usage
 
-This module is intended to be use'd by a module L</Author> to enforce the
-interface restrictions inherent in their module.  From that point onwards,
-anyone using B<that> module (L</Consumer>) is restricted from using specific
-versions, with a useful error message explaining why.
-
-=head2 Author
-
-A module author who wishes to ensure than any interface changes are 
-specified in a consistent way only needs to add a call like this to their
-code:
-
-  use version::Limit;
-  version::Limit::Scope(
-    # see subsequent discussion for what needs to go here
-  );
-
-and any L</Consumer> of their module will not accidently run an incompatible
-version.
- 
 For example, if a module changes in a incompatible way at version 1.0.0,
 then the following line will prevent any program from calling that module
 and requesting any version from 0.0.0 to 1.0.0:
 
   version::Limit::Scope(
-      "[0.0.0, 1.0.0)" => "constructor syntax has changed"
+      "[0.0.0,1.0.0)" => "constructor syntax has changed"
   );
 
 The first term (the range) is coded using standard set notation.  The above
@@ -128,7 +110,7 @@ translates to:
 
   greater than or equal to 0.0.0 and less than 1.0.0
 
-Note that both terminal characters are independent, so "(0.0.0, 1.0.0]" is
+Note that both terminal characters are independent, so "(0.0.0,1.0.0]" is
 also a permitted range.
 
 A module can also have holes in the permitted version values, for example to
@@ -136,7 +118,7 @@ account for a bug which was introduced in one version and fixed in a later
 one.  For example:
 
   version::Limit::Scope(
-    "[2.2.4, 2.3.1)" => "frobniz method croaks without second argument"
+    "[2.2.4,2.3.1)" => "frobniz method croaks without second argument"
   );
 
 would signify that starting in version 2.2.4, there was a problem which 
@@ -145,30 +127,49 @@ wasn't fixed until 2.3.1.
 A module can have as many or as few exclusions defined.  They can be 
 initialized either individually or all at once.  The ranges must be
 unique and exclusive, i.e. not overlap (although there is currently no
-code that checks that).
-
-=head2 Consumer
-
-A consumer of a module restricted with version::Limit doesn't have to do 
-anything except:
-
-  use Some::Module 1.3;
-
-and if that module has restrictions set and the requested version is inside
-one of the restricted ranges, then the user's module will die with an 
-appropriate error (as defined by the L</Author>).
-
-B<NOTE:> if the Consumer doesn't specify a version on the L<use> line, they
-will B<not> receive a warning, and the module will continue to load.  There is
-no way for the L</Author> to require that the Consumer always specify which 
-version they are targeting, but the L</Author> is strongly encouraged to state
-this in their module documentation.
+code that enforces that limitation).
 
 =head2 Limitations
 
-Because this module uses cutting edge features of Perl, it is limited to
-Perl 5.8.1 and greater, even though the B<version> module provides support
-with all Perl versions 5.005_03 and greater.
+If consumers of your module/library don't explicitly request a version on
+the C<use> line, they will not receive any warning, no matter what
+limitations have been configured.  If you use this module to provide API
+guarantees for your module, you are B<strongly> encouraged to document this
+in your own module.
+
+Because of varying support for v-strings in Perl starting with 5.6.0
+through 5.8.1, certain behavior of this module depends on precisely which
+Perl release you are using.  This limitation is for modules which use your
+module, and relates to how the requested version can be expressed in the
+source code.
+
+=over 4
+
+=item Perl 5.005_03
+
+No support for v-strings at all, so all modules must use strictly numeric
+version numbers, see L<version> for details.  This includes the C<use>
+line, which must use a bare floating point number, e.g.
+
+  use module 1.002003; #not the equivalent 1.2.3
+
+=item Perl 5.6.x through 5.8.0 (inclusive)
+
+Some support for v-strings, but you are B<strongly> encouraged to recommend
+only numeric version strings be used, as in the above case.
+
+=item Perl 5.8.1 and newer
+
+Full support for "magic" v-strings, which can be used anywhere that a
+numeric version can be used (all of the following are equivalent):
+
+  use module 1.002003; # numeric version
+  use module 1.2.3;    # extended version
+  use module v1.2.3;   # canonical extended version
+
+Nevertheless, unless B<your> module/library only supports Perl 5.8.1 or
+later, you are strongly encouraged to recommend only numeric version
+strings, for maximum compatibility.
 
 =head1 EXPORT
 
@@ -184,7 +185,7 @@ John Peacock, E<lt>jpeacock@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004 by John Peacock
+Copyright (C) 2004-2006 by John Peacock
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.3 or,

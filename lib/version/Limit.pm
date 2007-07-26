@@ -10,7 +10,7 @@ use vars qw/@ISA $VERSION/;
 
 @ISA = qw(Exporter);
 
-$VERSION = 0.03;
+$VERSION = 0.0301;
 
 # Preloaded methods go here.
 

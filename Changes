@@ -1,3 +1,7 @@
+2007-07-26  John Peacock <jpeacock@cpan.org>
+
+	New release to handle slight change in version object syntax.
+
 2006-09-21  John Peacock <jpeacock@cpan.org>
 
 	Tweak MANIFEST to make "release" happy

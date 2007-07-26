@@ -34,5 +34,5 @@ eval "use LimitTest 2.003001";
 ok(!$@, "top of second range doesn't match");
 
 eval "use LimitTest 5.000";
-like($@, qr/version 5.000 required/,
+like($@, qr/version 5 required/,
     "normal 'requested version too high' method works");
